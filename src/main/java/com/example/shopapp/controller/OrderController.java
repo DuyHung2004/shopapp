@@ -49,4 +49,10 @@ public class OrderController {
         apiResponse.setResult(orderService.deleteOrder(id));
         return apiResponse;
     }
+    @GetMapping("/getallorder")
+    public ApiResponse<List<OrderReponse>> getAllOrders(){
+        ApiResponse<List<OrderReponse>> apiResponse= new ApiResponse<>();
+        apiResponse.setResult(orderService.getAllOrders());
+        return apiResponse;
+    }
 }

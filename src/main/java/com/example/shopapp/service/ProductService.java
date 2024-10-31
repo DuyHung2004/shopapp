@@ -145,6 +145,7 @@ public class ProductService {
             product.put("id", row[0]);
             product.put("name", row[1]);
             product.put("thumbnail", row[2]);
+            product.put("price",row[4]);
             Category category= categoryRepository.findById((Integer) row[3]).orElseThrow(()->new AppException(ErrorCode.UNAUTHENTICATED));
             product.put("category",category);
             products.add(product);

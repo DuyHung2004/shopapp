@@ -17,6 +17,7 @@ public class UserResponse {
     String phonenumber;
     String address;
     LocalDate date_of_birth;
+    int is_active;
     int facebook_account_id;
     int google_account_id;
     Role role_id;

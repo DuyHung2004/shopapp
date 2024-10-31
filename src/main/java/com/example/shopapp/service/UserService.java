@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,5 +36,10 @@ public class UserService {
                         .name("user")
                 .build());
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+    public List<UserResponse> getAllUser(){
+        List<User> users=userRepository.findAll();
+        List<UserResponse> userResponses=users.stream().map(user -> userMapper.toUserResponse(user)).toList();
+        return userResponses;
     }
 }

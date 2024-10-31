@@ -77,4 +77,8 @@ public class OrderService {
         }
         return orderMapper.toOrderReponse(order);
     }
+    public  List<OrderReponse> getAllOrders(){
+        List<Order> orders= orderRepository.findAll();
+        return orders.stream().map(order -> orderMapper.toOrderReponse(order)).collect(Collectors.toList());
+    }
 }

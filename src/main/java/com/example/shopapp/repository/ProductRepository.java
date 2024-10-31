@@ -27,6 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                 p.name AS product_name,
                 p.thumbnail,
                 p.category_id,
+                p.price,
                 ROW_NUMBER() OVER(PARTITION BY p.category_id ORDER BY p.id) AS rn
             FROM products p
         )
