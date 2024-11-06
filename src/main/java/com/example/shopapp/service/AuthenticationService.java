@@ -21,6 +21,8 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,25 @@ public class AuthenticationService {
     public AuthenticationReponse login(LoginRequest request){
         var user= userRepository.findByPhonenumber(request.getPhonenumber())
                 .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        PasswordEncoder passwordEncoder= new BCryptPasswordEncoder(10);
+        boolean authenticated = passwordEncoder.matches(request.getPass(), user.getPass());
+        if(!authenticated){
+            throw  new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+        var token= generateToken(user);
+        return  AuthenticationReponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+    }
+
+    public AuthenticationReponse loginadmin(LoginRequest request){
+        var user= userRepository.findByPhonenumber(request.getPhonenumber())
+                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(user.getRole_id().getId()!=2){
+            throw new RuntimeException() ;
+        }
         PasswordEncoder passwordEncoder= new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPass(), user.getPass());
         if(!authenticated){

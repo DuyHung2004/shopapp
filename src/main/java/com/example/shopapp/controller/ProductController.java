@@ -5,13 +5,17 @@ import com.example.shopapp.dto.reponse.ProductImageResponse;
 import com.example.shopapp.dto.reponse.ProductReponse;
 import com.example.shopapp.dto.request.ProductImageRequest;
 import com.example.shopapp.dto.request.ProductRequest;
+import com.example.shopapp.dto.request.ProductUpdateRequest;
 import com.example.shopapp.exception.AppException;
 import com.example.shopapp.exception.ErrorCode;
 import com.example.shopapp.mapper.ProductMapper;
 import com.example.shopapp.models.Product;
 import com.example.shopapp.service.ProductService;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.core.io.UrlResource;
@@ -42,7 +46,17 @@ import java.util.UUID;
 @RequestMapping("api/v1/products")
 public class ProductController {
     ProductService productService;
-    ProductMapper productMapper;
+    @NonFinal
+    @Value("${app.upload.dir}")
+    protected String uploadDir;
+    @PostConstruct
+    public void init() {
+        try {
+            Files.createDirectories(Paths.get(uploadDir));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @PostMapping
     ApiResponse<Map<String, Object>> createProduct(
                     @Valid @ModelAttribute ProductRequest request
@@ -80,7 +94,7 @@ public class ProductController {
     }
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) throws MalformedURLException {
-        Path imagePath =Paths.get("uploads/"+imageName);
+        Path imagePath =Paths.get(uploadDir+imageName);
         UrlResource resource= new UrlResource(imagePath.toUri());
         if(resource.exists()){
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
@@ -95,10 +109,32 @@ public class ProductController {
         listApiResponse.setResult(productService.getAllByProductId(productid));
         return listApiResponse;
     }
+    @GetMapping("/{productid}")
+    public ApiResponse<ProductReponse> getProduct(@PathVariable int productid){
+        ApiResponse<ProductReponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(productService.getProduct(productid));
+        return apiResponse;
+    }
     @GetMapping("/topproduct")
     public ApiResponse<List<?>> gettopproduct(){
         ApiResponse<List<?>> listApiResponse= new ApiResponse<>();
         listApiResponse.setResult(productService.findTop5Products());
         return listApiResponse;
+    }
+    @PutMapping
+    public ApiResponse<ProductReponse> updateProduct(int id, ProductUpdateRequest request){
+        ApiResponse<ProductReponse> apiResponse= new ApiResponse<>();
+        apiResponse.setResult(productService.updateProduct(id, request));
+        return apiResponse;
+    }
+    @DeleteMapping("/{id}")
+    String deleteImage(@PathVariable int id){
+        productService.deleteImage(id);
+        return "Xoa thanh cong";
+    }
+    @DeleteMapping("/product/{id}")
+    String deleteProduct(@PathVariable int id){
+        productService.deleteProduct(id);
+        return "Xoa thanh cong";
     }
 }

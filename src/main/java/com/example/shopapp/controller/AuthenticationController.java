@@ -46,4 +46,16 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+    @PostMapping("/login_admin")
+    ApiResponse<AuthenticationReponse> loginadmin(@RequestBody LoginRequest request, HttpServletResponse response){
+        var result= authenticationService.loginadmin(request);
+        Cookie cookie = new Cookie("token", result.getToken());
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+        return ApiResponse.<AuthenticationReponse>builder()
+                .result(result)
+                .build();
+    }
 }

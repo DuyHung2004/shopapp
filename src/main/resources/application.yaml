@@ -21,3 +21,7 @@ jwt:
   signerKey: "KBFH5tKwkMxbapkifkeoj1W8XtSy9O4rsnzwzSnVo5wu/736wxHVVNmmdlrLJWPF"
   valid-duration: 3600
   refreshable-duration: 36000
+app:
+  upload:
+    dir: uploads/
+

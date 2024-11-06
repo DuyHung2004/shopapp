@@ -19,7 +19,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private static final String[] PUCLIC_ENDPOINTS={"/users","/auth/login","/auth/introspect"};
+    private static final String[] PUCLIC_ENDPOINTS={"/users","/auth/login","/auth/introspect","/auth/login_admin"};
     private final CustomJwtDecoder customJwtDecoder;
 
     public SecurityConfig(CustomJwtDecoder customJwtDecoder) {

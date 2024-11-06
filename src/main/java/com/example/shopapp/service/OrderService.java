@@ -2,6 +2,7 @@ package com.example.shopapp.service;
 
 import com.example.shopapp.dto.reponse.OrderReponse;
 import com.example.shopapp.dto.request.OrderRequest;
+import com.example.shopapp.dto.request.OrderUpdateRequest;
 import com.example.shopapp.enums.Status;
 import com.example.shopapp.exception.AppException;
 import com.example.shopapp.exception.ErrorCode;
@@ -64,9 +65,9 @@ public class OrderService {
                 .map(order -> orderMapper.toOrderReponse(order))
                 .collect(Collectors.toList());
     }
-    public OrderReponse updateOrder(int id, OrderRequest orderRequest){
+    public OrderReponse updateOrder(int id, OrderUpdateRequest request){
         Order order= orderRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.UNAUTHENTICATED));
-        orderMapper.updateOrder(order,orderRequest);
+        orderMapper.updateOrder(order,request);
         return orderMapper.toOrderReponse(orderRepository.save(order));
     }
     public OrderReponse deleteOrder(int id){

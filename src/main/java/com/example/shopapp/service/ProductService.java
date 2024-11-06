@@ -4,6 +4,7 @@ import com.example.shopapp.dto.reponse.ProductImageResponse;
 import com.example.shopapp.dto.reponse.ProductReponse;
 import com.example.shopapp.dto.request.ProductImageRequest;
 import com.example.shopapp.dto.request.ProductRequest;
+import com.example.shopapp.dto.request.ProductUpdateRequest;
 import com.example.shopapp.exception.AppException;
 import com.example.shopapp.exception.ErrorCode;
 import com.example.shopapp.mapper.ProductImageMapper;
@@ -152,5 +153,15 @@ public class ProductService {
         }
         return products;
     }
-
+    public ProductReponse updateProduct(int id, ProductUpdateRequest request){
+        Product product =productRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.UNAUTHENTICATED));
+        productMapper.updateProduct(product,request);
+        return productMapper.toProductReponse(productRepository.save(product));
+    }
+    public void deleteImage(int id){
+        productImageRepository.deleteById(id);
+    }
+    public void deleteProduct(int id){
+        productRepository.deleteById(id);
+    }
 }

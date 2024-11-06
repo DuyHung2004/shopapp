@@ -3,6 +3,7 @@ package com.example.shopapp.controller;
 import com.example.shopapp.dto.reponse.ApiResponse;
 import com.example.shopapp.dto.reponse.OrderReponse;
 import com.example.shopapp.dto.request.OrderRequest;
+import com.example.shopapp.dto.request.OrderUpdateRequest;
 import com.example.shopapp.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -38,9 +39,9 @@ public class OrderController {
         return ResponseEntity.ok(listApiResponse);
     }
     @PutMapping("/{id}")
-    public ApiResponse<OrderReponse> updateOrder(@PathVariable("id") int id,@RequestBody OrderRequest orderRequest){
+    public ApiResponse<OrderReponse> updateOrder(@PathVariable("id") int id,@ModelAttribute OrderUpdateRequest request){
         ApiResponse<OrderReponse> orderReponseApiResponse= new ApiResponse<>();
-        orderReponseApiResponse.setResult(orderService.updateOrder(id,orderRequest));
+        orderReponseApiResponse.setResult(orderService.updateOrder(id,request));
         return orderReponseApiResponse;
     }
     @DeleteMapping("/{id}")
@@ -55,4 +56,5 @@ public class OrderController {
         apiResponse.setResult(orderService.getAllOrders());
         return apiResponse;
     }
+
 }

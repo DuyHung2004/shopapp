@@ -34,4 +34,7 @@ public class CategoryService {
         List<CategoryReponse> categoryReponses= (List<CategoryReponse>) categoryRepository.findAll().stream().map((category -> categoryMapper.toCategoryReponse(category))).toList();
         return categoryReponses ;
     }
+    public void deleteCategory(int id){
+        categoryRepository.deleteById(id);
+    }
 }

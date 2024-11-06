@@ -30,4 +30,9 @@ public class CategoryController {
         apiResponse.setResult(categoryService.getAllCategory());
         return apiResponse;
     }
+    @DeleteMapping("/{categoryid}")
+    String deleteCategory(@PathVariable int categoryid){
+        categoryService.deleteCategory(categoryid);
+        return "Xoa danh muc thanh cong";
+    }
 }
