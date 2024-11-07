@@ -1,6 +1,7 @@
 package com.example.shopapp.service;
 
 import com.example.shopapp.dto.reponse.UserResponse;
+import com.example.shopapp.dto.request.PasswordRequest;
 import com.example.shopapp.dto.request.UserCreationRequest;
 import com.example.shopapp.dto.request.UserUpdateRequest;
 import com.example.shopapp.exception.AppException;
@@ -73,5 +74,14 @@ public class UserService {
         String name= context.getAuthentication().getName();
         User user= userRepository.findByPhonenumber(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
+    }
+    public String changepassword(int id, PasswordRequest request) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if(!passwordEncoder.matches(request.getPasscurrent(),user.getPass())){
+            return "mat khau hien tai khong dung";
+        }
+        user.setPass(passwordEncoder.encode(request.getPassnew()));
+        userRepository.save(user);
+        return "doi pass thanh cong";
     }
 }

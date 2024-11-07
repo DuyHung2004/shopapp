@@ -6,6 +6,7 @@ import com.example.shopapp.dto.request.IntrospectRequest;
 import com.example.shopapp.dto.request.LoginRequest;
 import com.example.shopapp.exception.AppException;
 import com.example.shopapp.exception.ErrorCode;
+import com.example.shopapp.models.Role;
 import com.example.shopapp.models.User;
 import com.example.shopapp.repository.TokenRepository;
 import com.example.shopapp.repository.UserRepository;
@@ -64,7 +65,18 @@ public class AuthenticationService {
                 .valid(inValid)
                 .build();
     }
-
+    public IntrospectReponse introspectReponse2(IntrospectRequest request) throws JOSEException, ParseException {
+        var token= request.getToken();
+        boolean inValid= true;
+        try {
+            verifyToken2(token,false);
+        }catch (AppException e){
+            inValid= false;
+        }
+        return IntrospectReponse.builder()
+                .valid(inValid)
+                .build();
+    }
 
     public AuthenticationReponse login(LoginRequest request){
         var user= userRepository.findByPhonenumber(request.getPhonenumber())
@@ -134,6 +146,24 @@ public class AuthenticationService {
         if (!(verified  && expityTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         if (tokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        return signedJWT;
+    }
+    private SignedJWT verifyToken2(String token, boolean isRefresh) throws JOSEException, ParseException {
+        log.info("Verifying token: {}", token);
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        SignedJWT signedJWT= SignedJWT.parse(token);
+        Date expityTime= (isRefresh)
+                ? new Date( signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                :signedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified= signedJWT.verify(verifier);
+        String scope =signedJWT.getJWTClaimsSet().getStringClaim("scope");
+        log.info("Token verified: {}", verified);
+        if (!(verified  && expityTime.after(new Date())))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (tokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if(!scope.equals("ROLE_admin"))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         return signedJWT;
     }

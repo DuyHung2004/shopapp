@@ -2,6 +2,7 @@ package com.example.shopapp.controller;
 
 import com.example.shopapp.dto.reponse.ApiResponse;
 import com.example.shopapp.dto.reponse.UserResponse;
+import com.example.shopapp.dto.request.PasswordRequest;
 import com.example.shopapp.dto.request.UserCreationRequest;
 import com.example.shopapp.dto.request.UserUpdateRequest;
 import com.example.shopapp.models.Role;
@@ -63,5 +64,11 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getmyinfo())
                 .build();
+    }
+    @PostMapping("/changepassword/{userId}")
+    public ApiResponse<String> changepass(@PathVariable int userId,@RequestBody PasswordRequest request){
+        ApiResponse<String> apiResponse= new ApiResponse<>();
+        apiResponse.setResult(userService.changepassword(userId,request));
+        return apiResponse;
     }
 }

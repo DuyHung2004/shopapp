@@ -46,6 +46,13 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+    @PostMapping("/introspect2")
+    ApiResponse<IntrospectReponse> authenticateadmin(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+        var result= authenticationService.introspectReponse2(request);
+        return ApiResponse.<IntrospectReponse>builder()
+                .result(result)
+                .build();
+    }
     @PostMapping("/login_admin")
     ApiResponse<AuthenticationReponse> loginadmin(@RequestBody LoginRequest request, HttpServletResponse response){
         var result= authenticationService.loginadmin(request);
