@@ -77,7 +77,7 @@ public class ProductController {
     }
     @GetMapping("")
     ResponseEntity<?> getProducts(
-            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "",name = "keyword") String keyword,
             @RequestParam(defaultValue = "0",name = "categoryId") int categoryId,
             @RequestParam(defaultValue ="0" ,name = "page") int page,
             @RequestParam(defaultValue ="9" ,name="limit") int limit
