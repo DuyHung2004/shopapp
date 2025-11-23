@@ -4,7 +4,11 @@ import com.example.shopapp.dto.reponse.ApiResponse;
 import com.example.shopapp.dto.reponse.OrderReponse;
 import com.example.shopapp.dto.request.OrderRequest;
 import com.example.shopapp.dto.request.OrderUpdateRequest;
+import com.example.shopapp.dto.request.VnpayRequest;
+import com.example.shopapp.models.Vnpay;
 import com.example.shopapp.service.OrderService;
+import com.example.shopapp.service.VnPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +16,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,11 +26,25 @@ import java.util.List;
 @RequestMapping("api/v1/orders")
 public class OrderController {
     OrderService orderService;
+    VnpayController vnpayController;
+    VnPayService vnpayService;
     @PostMapping
-    ApiResponse<OrderReponse> createOrder(@RequestBody @Valid OrderRequest request){
+    ResponseEntity<?> createOrder(HttpServletRequest req,@RequestBody @Valid OrderRequest request) throws Exception {
         ApiResponse<OrderReponse> apiResponse= new ApiResponse<>();
-        apiResponse.setResult(orderService.createOrder(request));
-        return apiResponse;
+        OrderReponse orderRes = orderService.createOrder(request);
+        if (request.getPayment_method().equalsIgnoreCase("COD")) {
+            apiResponse.setResult(orderRes);
+            return ResponseEntity.ok(apiResponse);
+        } else if (request.getPayment_method().equalsIgnoreCase("VNPAY")){
+            VnpayRequest vnpay= VnpayRequest.builder()
+                    .amount((long) request.getTotal_money())
+                    .orderId(orderRes.getId())
+                    .language("vn")
+                    .build();
+            Map<String, Object> paymentData = vnpayService.createPayment(req, vnpay);
+            return ResponseEntity.ok(paymentData);
+        }
+        return null;
     }
     @GetMapping("/{id}")
     public ApiResponse<OrderReponse> getOrder(@Valid @PathVariable("id") int id){
@@ -45,9 +65,9 @@ public class OrderController {
         return orderReponseApiResponse;
     }
     @DeleteMapping("/{id}")
-    public ApiResponse<OrderReponse> deleteOrder(@Valid @PathVariable("id") int id){
+    public ApiResponse<OrderReponse> deleteOrder(HttpServletRequest req,@Valid @PathVariable("id") int id) throws IOException {
         ApiResponse<OrderReponse> apiResponse= new ApiResponse<>();
-        apiResponse.setResult(orderService.deleteOrder(id));
+        apiResponse.setResult(orderService.deleteOrder(req,id));
         return apiResponse;
     }
     @GetMapping("/getallorder")

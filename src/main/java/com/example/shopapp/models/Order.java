@@ -40,4 +40,6 @@ public class Order {
     String tracking_number;
     String payment_method;
     boolean active;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    Vnpay vnpay;
 }

@@ -30,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request
                 -> request.requestMatchers(HttpMethod.POST,PUCLIC_ENDPOINTS).permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/products/**","api/v1/categories","/users","/api/v1/orders/getallorder").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/products/**","/api/v1/categories","/users","/api/v1/orders/getallorder","/api/payment/vnpay-callback").permitAll()
                 .anyRequest().authenticated());
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))

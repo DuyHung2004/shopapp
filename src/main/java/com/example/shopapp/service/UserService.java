@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +42,7 @@ public class UserService {
                 .build());
         return userMapper.toUserResponse(userRepository.save(user));
     }
+    @PreAuthorize("hasRole('admin')")
     public List<UserResponse> getAllUser(){
         List<User> users=userRepository.findAll();
         List<UserResponse> userResponses=users.stream().map(user -> userMapper.toUserResponse(user)).toList();

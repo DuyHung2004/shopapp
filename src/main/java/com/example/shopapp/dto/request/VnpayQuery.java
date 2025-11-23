@@ -1,4 +1,4 @@
-package com.example.shopapp.dto.reponse;
+package com.example.shopapp.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectReponse {
-    boolean valid;
-    String role;
+public class VnpayQuery {
+    String order_id;
+    String trans_date;
 }

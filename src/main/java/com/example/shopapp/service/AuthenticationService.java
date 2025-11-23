@@ -55,13 +55,16 @@ public class AuthenticationService {
     public IntrospectReponse introspectReponse(IntrospectRequest request) throws JOSEException, ParseException {
         var token= request.getToken();
         boolean inValid= true;
+        String role = null;
         try {
-            verifyToken(token,false);
+            SignedJWT jwt =verifyToken(token,false);
+            role = jwt.getJWTClaimsSet().getStringClaim("scope").substring(5);
         }catch (AppException e){
             inValid= false;
         }
         return IntrospectReponse.builder()
                 .valid(inValid)
+                .role(role)
                 .build();
     }
 
